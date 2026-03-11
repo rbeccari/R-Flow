@@ -1,11 +1,21 @@
-import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  ReactNode,
+  useEffect,
+} from 'react'
 import { Task, Chat, TimeLog, TaskStatus } from '@/lib/types'
-import { MOCK_TASKS, MOCK_CHATS } from './mockData'
+import { MOCK_TASKS } from './mockData'
 import { toast } from '@/hooks/use-toast'
+import { skipCloud } from '@/lib/skip-cloud/client'
 
 interface AppStoreContextType {
   tasks: Task[]
   chats: Chat[]
+  loadingChats: boolean
   addTask: (task: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => void
   updateTaskStatus: (taskId: string, status: TaskStatus) => void
   addTimeLog: (taskId: string, log: Omit<TimeLog, 'id'>) => void
@@ -22,7 +32,42 @@ export default function useAppStore() {
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS)
-  const [chats, setChats] = useState<Chat[]>(MOCK_CHATS)
+  const [chats, setChats] = useState<Chat[]>([])
+  const [loadingChats, setLoadingChats] = useState(true)
+
+  useEffect(() => {
+    async function fetchChats() {
+      try {
+        const [skipChats, skipMessages] = await Promise.all([
+          skipCloud.collection('chats').getFullList(),
+          skipCloud.collection('messages').getFullList(),
+        ])
+
+        const formattedChats: Chat[] = skipChats.map((c: any) => ({
+          id: c.id,
+          contactName: c.contactName,
+          avatar: c.avatar,
+          unread: c.unread,
+          messages: skipMessages
+            .filter((m: any) => m.chat_id === c.id)
+            .map((m: any) => ({
+              id: m.id,
+              text: m.content,
+              sender: m.sender_id === 'agent' ? 'agent' : 'client',
+              timestamp: m.timestamp,
+            }))
+            .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()),
+        }))
+
+        setChats(formattedChats)
+      } catch (err) {
+        toast({ title: 'Erro', description: 'Não foi possível carregar as conversas.' })
+      } finally {
+        setLoadingChats(false)
+      }
+    }
+    fetchChats()
+  }, [])
 
   const addTask = useCallback(
     (newTask: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => {
@@ -84,12 +129,13 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     () => ({
       tasks,
       chats,
+      loadingChats,
       addTask,
       updateTaskStatus,
       addTimeLog,
       markChatRead,
     }),
-    [tasks, chats, addTask, updateTaskStatus, addTimeLog, markChatRead],
+    [tasks, chats, loadingChats, addTask, updateTaskStatus, addTimeLog, markChatRead],
   )
 
   return <AppStoreContext.Provider value={contextValue}>{children}</AppStoreContext.Provider>

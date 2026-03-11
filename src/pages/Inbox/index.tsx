@@ -3,7 +3,7 @@ import useAppStore from '@/stores/useAppStore'
 import ChatList from './ChatList'
 import ActiveChat from './ActiveChat'
 import NewTaskSheet from '@/components/NewTaskSheet'
-import { MessageCircle, AlertTriangle } from 'lucide-react'
+import { MessageCircle, AlertTriangle, Loader2 } from 'lucide-react'
 
 class InboxErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -42,12 +42,16 @@ class InboxErrorBoundary extends React.Component<
 }
 
 function InboxContent() {
-  const { chats, markChatRead } = useAppStore()
-  const [activeChatId, setActiveChatId] = useState<string | null>(
-    chats.length > 0 ? chats[0].id : null,
-  )
+  const { chats, markChatRead, loadingChats } = useAppStore()
+  const [activeChatId, setActiveChatId] = useState<string | null>(null)
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false)
   const [taskDescriptionText, setTaskDescriptionText] = useState('')
+
+  useEffect(() => {
+    if (!activeChatId && chats.length > 0) {
+      setActiveChatId(chats[0].id)
+    }
+  }, [chats, activeChatId])
 
   const activeChat = chats.find((c) => c.id === activeChatId)
 
@@ -60,6 +64,15 @@ function InboxContent() {
   const handleCreateTaskClick = (text: string) => {
     setTaskDescriptionText(text)
     setIsTaskSheetOpen(true)
+  }
+
+  if (loadingChats) {
+    return (
+      <div className="h-[calc(100vh-8rem)] w-full flex flex-col items-center justify-center bg-card rounded-xl border shadow-subtle animate-fade-in">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground text-sm">Sincronizando com Skip Cloud...</p>
+      </div>
+    )
   }
 
   return (

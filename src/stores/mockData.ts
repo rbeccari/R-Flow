@@ -1,4 +1,4 @@
-import { Task, Chat } from '@/lib/types'
+import { Task } from '@/lib/types'
 
 export const MOCK_TASKS: Task[] = [
   {
@@ -9,7 +9,7 @@ export const MOCK_TASKS: Task[] = [
     status: 'done',
     assignee: 'Mariana Silva',
     clientName: 'Alpha S/A',
-    deadline: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    deadline: new Date(Date.now() - 86400000).toISOString(),
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
     completedAt: new Date(Date.now() - 86400000).toISOString(),
     history: ['Tarefa criada a partir do WhatsApp', 'Status alterado para done'],
@@ -85,55 +85,6 @@ export const MOCK_TASKS: Task[] = [
         endTime: new Date(Date.now() - 86400000 * 6 + 5400000).toISOString(),
         durationMinutes: 90,
         summary: 'Revisão ortográfica e SEO',
-      },
-    ],
-  },
-]
-
-export const MOCK_CHATS: Chat[] = [
-  {
-    id: 'c1',
-    contactName: 'Cliente Alpha S/A',
-    avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
-    unread: 2,
-    messages: [
-      {
-        id: 'm1',
-        text: 'Oi pessoal, tudo bem?',
-        sender: 'client',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-      },
-      {
-        id: 'm2',
-        text: 'Tudo ótimo! Como podemos ajudar?',
-        sender: 'agent',
-        timestamp: new Date(Date.now() - 3500000).toISOString(),
-      },
-      {
-        id: 'm3',
-        text: 'Preciso que vocês alterem a arte do post de amanhã. A logo nova não está lá.',
-        sender: 'client',
-        timestamp: new Date(Date.now() - 3000000).toISOString(),
-      },
-    ],
-  },
-  {
-    id: 'c2',
-    contactName: 'Boutique Beta',
-    avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=4',
-    unread: 0,
-    messages: [
-      {
-        id: 'm4',
-        text: 'Aprovo o orçamento enviado!',
-        sender: 'client',
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
-      },
-      {
-        id: 'm5',
-        text: 'Perfeito, vamos iniciar a produção.',
-        sender: 'agent',
-        timestamp: new Date(Date.now() - 86000000).toISOString(),
       },
     ],
   },

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react'
 import { Task, Chat, TimeLog, TaskStatus } from '@/lib/types'
 import { MOCK_TASKS, MOCK_CHATS } from './mockData'
 import { toast } from '@/hooks/use-toast'
@@ -24,19 +24,22 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS)
   const [chats, setChats] = useState<Chat[]>(MOCK_CHATS)
 
-  const addTask = (newTask: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => {
-    const task: Task = {
-      ...newTask,
-      id: Math.random().toString(36).substr(2, 9),
-      createdAt: new Date().toISOString(),
-      history: ['Tarefa criada'],
-      timeLogs: [],
-    }
-    setTasks((prev) => [task, ...prev])
-    toast({ title: 'Sucesso', description: 'Tarefa criada com sucesso!' })
-  }
+  const addTask = useCallback(
+    (newTask: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => {
+      const task: Task = {
+        ...newTask,
+        id: Math.random().toString(36).substr(2, 9),
+        createdAt: new Date().toISOString(),
+        history: ['Tarefa criada'],
+        timeLogs: [],
+      }
+      setTasks((prev) => [task, ...prev])
+      toast({ title: 'Sucesso', description: 'Tarefa criada com sucesso!' })
+    },
+    [],
+  )
 
-  const updateTaskStatus = (taskId: string, status: TaskStatus) => {
+  const updateTaskStatus = useCallback((taskId: string, status: TaskStatus) => {
     setTasks((prev) =>
       prev.map((t) => {
         if (t.id !== taskId) return t
@@ -56,9 +59,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       }),
     )
     toast({ title: 'Status Atualizado', description: `A tarefa foi movida.` })
-  }
+  }, [])
 
-  const addTimeLog = (taskId: string, log: Omit<TimeLog, 'id'>) => {
+  const addTimeLog = useCallback((taskId: string, log: Omit<TimeLog, 'id'>) => {
     const newLog: TimeLog = { ...log, id: Math.random().toString(36).substr(2, 9) }
     setTasks((prev) =>
       prev.map((t) => {
@@ -71,17 +74,23 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       }),
     )
     toast({ title: 'Tempo Registrado', description: 'Horas salvas com sucesso no projeto.' })
-  }
+  }, [])
 
-  const markChatRead = (chatId: string) => {
+  const markChatRead = useCallback((chatId: string) => {
     setChats((prev) => prev.map((c) => (c.id === chatId ? { ...c, unread: 0 } : c)))
-  }
+  }, [])
 
-  return (
-    <AppStoreContext.Provider
-      value={{ tasks, chats, addTask, updateTaskStatus, addTimeLog, markChatRead }}
-    >
-      {children}
-    </AppStoreContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      tasks,
+      chats,
+      addTask,
+      updateTaskStatus,
+      addTimeLog,
+      markChatRead,
+    }),
+    [tasks, chats, addTask, updateTaskStatus, addTimeLog, markChatRead],
   )
+
+  return <AppStoreContext.Provider value={contextValue}>{children}</AppStoreContext.Provider>
 }

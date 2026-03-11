@@ -15,8 +15,10 @@ export interface Task {
   description: string
   status: TaskStatus
   assignee: string
+  clientName?: string
   deadline: string
   createdAt: string
+  completedAt?: string
   history: string[]
   timeLogs: TimeLog[]
 }

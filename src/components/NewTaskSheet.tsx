@@ -27,6 +27,7 @@ export default function NewTaskSheet({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState(initialDescription)
   const [assignee, setAssignee] = useState('')
+  const [clientName, setClientName] = useState('')
   const [deadline, setDeadline] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,6 +37,7 @@ export default function NewTaskSheet({
       title,
       description,
       assignee: assignee || 'Não Atribuído',
+      clientName: clientName || 'Não Informado',
       deadline: deadline ? new Date(deadline).toISOString() : new Date().toISOString(),
       status: 'requested',
     })
@@ -43,6 +45,7 @@ export default function NewTaskSheet({
     setTitle('')
     setDescription('')
     setAssignee('')
+    setClientName('')
     setDeadline('')
   }
 
@@ -62,6 +65,15 @@ export default function NewTaskSheet({
               onChange={(e) => setTitle(e.target.value)}
               required
               placeholder="Ex: Alterar logo da campanha"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="clientName">Cliente</Label>
+            <Input
+              id="clientName"
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
+              placeholder="Ex: Alpha S/A"
             />
           </div>
           <div className="space-y-2">

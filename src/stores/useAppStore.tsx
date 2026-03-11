@@ -38,11 +38,22 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const updateTaskStatus = (taskId: string, status: TaskStatus) => {
     setTasks((prev) =>
-      prev.map((t) =>
-        t.id === taskId
-          ? { ...t, status, history: [...t.history, `Status alterado para ${status}`] }
-          : t,
-      ),
+      prev.map((t) => {
+        if (t.id !== taskId) return t
+        const isDoneNow = status === 'done' && t.status !== 'done'
+        const isNoLongerDone = status !== 'done' && t.status === 'done'
+
+        return {
+          ...t,
+          status,
+          completedAt: isDoneNow
+            ? new Date().toISOString()
+            : isNoLongerDone
+              ? undefined
+              : t.completedAt,
+          history: [...t.history, `Status alterado para ${status}`],
+        }
+      }),
     )
     toast({ title: 'Status Atualizado', description: `A tarefa foi movida.` })
   }

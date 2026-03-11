@@ -9,6 +9,7 @@ import Index from './pages/Index'
 import Inbox from './pages/Inbox'
 import Tasks from './pages/Tasks'
 import TaskDetail from './pages/TaskDetail'
+import Reports from './pages/Reports'
 import NotFound from './pages/NotFound'
 
 const App = () => (
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/tasks/:id" element={<TaskDetail />} />
+            <Route path="/reports" element={<Reports />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

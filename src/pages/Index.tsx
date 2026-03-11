@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import DashboardCards from './Dashboard/DashboardCards'
 import DashboardChart from './Dashboard/DashboardChart'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -6,9 +7,12 @@ import { Badge } from '@/components/ui/badge'
 
 export default function Index() {
   const { tasks } = useAppStore()
-  const recentTasks = [...tasks]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5)
+
+  const recentTasks = useMemo(() => {
+    return [...tasks]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5)
+  }, [tasks])
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">

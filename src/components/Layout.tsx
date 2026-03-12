@@ -8,6 +8,7 @@ import {
   Plus,
   FileText,
   LogOut,
+  User as UserIcon,
 } from 'lucide-react'
 import {
   SidebarProvider,
@@ -102,22 +103,30 @@ export default function Layout() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Avatar className="w-8 h-8 cursor-pointer ring-2 ring-transparent hover:ring-primary transition-all">
-                    <AvatarImage src="https://img.usecurling.com/ppl/thumbnail?gender=male&seed=10" />
+                    <AvatarImage
+                      src={`https://img.usecurling.com/ppl/thumbnail?gender=male&seed=${user?.id}`}
+                    />
                     <AvatarFallback>
-                      {user?.email?.substring(0, 2).toUpperCase() || 'AD'}
+                      {user?.name?.substring(0, 2).toUpperCase() || 'AD'}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">Minha Conta</p>
+                      <p className="text-sm font-medium leading-none">{user?.name || 'Usuário'}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user?.email || 'usuario@agencia.com'}
                       </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer w-full flex items-center">
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      <span>Meu Perfil</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleSignOut}
                     className="text-destructive focus:text-destructive cursor-pointer"

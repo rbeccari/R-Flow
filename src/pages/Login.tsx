@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useLocation, Navigate } from 'react-router-dom'
+import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import {
   Card,
@@ -91,6 +91,12 @@ export default function Login() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Senha</Label>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Esqueceu a senha?
+                </Link>
               </div>
               <Input
                 id="password"
@@ -102,7 +108,7 @@ export default function Login() {
               />
             </div>
           </CardContent>
-          <CardFooter className="pt-2">
+          <CardFooter className="pt-2 flex flex-col gap-4">
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
@@ -113,6 +119,12 @@ export default function Login() {
                 'Entrar'
               )}
             </Button>
+            <div className="text-center text-sm">
+              Não tem uma conta?{' '}
+              <Link to="/register" className="font-medium text-primary hover:underline">
+                Cadastre-se
+              </Link>
+            </div>
           </CardFooter>
         </form>
       </Card>

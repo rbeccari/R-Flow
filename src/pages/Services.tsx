@@ -20,7 +20,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
-import NewTaskSheet from '@/components/NewTaskSheet'
+import NewServiceSheet from '@/components/NewServiceSheet'
 import { TaskStatus, TaskPriority } from '@/lib/types'
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
@@ -48,7 +48,7 @@ export default function Services() {
   const { tasks, updateTaskStatus } = useAppStore()
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [filterPriority, setFilterPriority] = useState<string>('all')
-  const [isNewTaskOpen, setIsNewTaskOpen] = useState(false)
+  const [isNewServiceOpen, setIsNewServiceOpen] = useState(false)
 
   const filteredTasks = useMemo(() => {
     let filtered = tasks
@@ -82,7 +82,7 @@ export default function Services() {
             Acompanhe e gerencie as solicitações de serviço da agência.
           </p>
         </div>
-        <Button onClick={() => setIsNewTaskOpen(true)}>
+        <Button onClick={() => setIsNewServiceOpen(true)}>
           <Plus className="w-4 h-4 mr-2" /> Novo Atendimento
         </Button>
       </div>
@@ -181,7 +181,7 @@ export default function Services() {
         </Table>
       </div>
 
-      <NewTaskSheet open={isNewTaskOpen} onOpenChange={setIsNewTaskOpen} />
+      <NewServiceSheet open={isNewServiceOpen} onOpenChange={setIsNewServiceOpen} />
     </div>
   )
 }

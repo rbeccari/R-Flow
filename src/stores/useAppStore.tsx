@@ -9,7 +9,10 @@ interface AppStoreContextType {
   chats: Chat[]
   notifications: AppNotification[]
   loadingChats: boolean
-  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => void
+  addTask: (
+    task: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>,
+    successMessage?: string,
+  ) => void
   updateTaskStatus: (taskId: string, status: TaskStatus) => void
   addTimeLog: (taskId: string, log: Omit<TimeLog, 'id'>) => void
   markChatRead: (chatId: string) => void
@@ -65,25 +68,25 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const addTask = useCallback(
-    (newTask: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => {
+    (newTask: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>, successMessage?: string) => {
       const task: Task = {
         ...newTask,
         id: Math.random().toString(36).substring(2, 9),
         createdAt: new Date().toISOString(),
-        history: ['Tarefa criada'],
+        history: ['Demanda criada'],
         timeLogs: [],
       }
       setTasks((prev) => [task, ...prev])
       setNotifications((prev) => [
         {
           id: Math.random().toString(36).substring(2, 9),
-          message: `Nova tarefa: ${task.title}`,
+          message: `Nova solicitação: ${task.title}`,
           read: false,
           createdAt: new Date().toISOString(),
         },
         ...prev,
       ])
-      toast({ title: 'Sucesso', description: 'Tarefa criada com sucesso!' })
+      toast({ title: 'Sucesso', description: successMessage || 'Tarefa criada com sucesso!' })
     },
     [],
   )
@@ -107,7 +110,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         }
       }),
     )
-    toast({ title: 'Status Atualizado', description: `A tarefa foi movida.` })
+    toast({ title: 'Status Atualizado', description: `O status da demanda foi atualizado.` })
   }, [])
 
   const addTimeLog = useCallback((taskId: string, log: Omit<TimeLog, 'id'>) => {

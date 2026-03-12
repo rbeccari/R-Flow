@@ -59,6 +59,9 @@ export default function ResetPassword() {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md shadow-lg border-border/50 animate-fade-in-up">
         <CardHeader className="space-y-2 text-center pb-6">
+          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground mx-auto mb-2 font-bold text-xl shadow-sm">
+            GA
+          </div>
           <CardTitle className="text-2xl font-bold tracking-tight">Nova Senha</CardTitle>
           <CardDescription>Crie uma nova senha para sua conta</CardDescription>
         </CardHeader>

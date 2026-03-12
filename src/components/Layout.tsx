@@ -62,11 +62,11 @@ export default function Layout() {
       <div className="flex h-screen w-full overflow-hidden bg-background print:overflow-visible print:h-auto">
         <Sidebar className="border-r border-border/50 print:hidden">
           <SidebarHeader className="h-16 flex items-center px-4 border-b border-border/50">
-            <div className="flex items-center gap-2 font-bold text-lg text-primary">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-                AG
+            <div className="flex items-center gap-2 font-bold text-primary w-full overflow-hidden">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shrink-0 text-base">
+                GA
               </div>
-              AgencyFlow
+              <span className="truncate text-sm">Gestão de Atendimento</span>
             </div>
           </SidebarHeader>
           <SidebarContent className="px-2 py-4">

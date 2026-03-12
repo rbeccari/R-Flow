@@ -69,7 +69,7 @@ export default function Login() {
       <Card className="w-full max-w-md shadow-lg border-border/50 animate-fade-in-up">
         <CardHeader className="space-y-2 text-center pb-6">
           <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground mx-auto mb-2 font-bold text-xl shadow-sm">
-            AG
+            GA
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">Bem-vindo de volta</CardTitle>
           <CardDescription>Faça login na sua conta para continuar</CardDescription>

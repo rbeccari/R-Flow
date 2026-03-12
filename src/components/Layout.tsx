@@ -12,6 +12,7 @@ import {
   ListTodo,
   Bell,
   CheckCircle2,
+  CloudCog,
 } from 'lucide-react'
 import {
   SidebarProvider,
@@ -40,6 +41,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAuth } from '@/hooks/use-auth'
 import useAppStore from '@/stores/useAppStore'
 import NewTaskSheet from './NewTaskSheet'
+import BackendIntegrationSheet from './BackendIntegrationSheet'
 
 const MENU_ITEMS = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
@@ -52,6 +54,7 @@ const MENU_ITEMS = [
 export default function Layout() {
   const location = useLocation()
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false)
+  const [isIntegrationSheetOpen, setIsIntegrationSheetOpen] = useState(false)
   const { user, signOut } = useAuth()
   const { notifications, markNotificationRead } = useAppStore()
 
@@ -98,6 +101,15 @@ export default function Layout() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative rounded-full text-muted-foreground hover:text-foreground"
+                onClick={() => setIsIntegrationSheetOpen(true)}
+              >
+                <CloudCog className="w-5 h-5" />
+              </Button>
+
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative rounded-full">
@@ -194,6 +206,10 @@ export default function Layout() {
         </main>
       </div>
       <NewTaskSheet open={isTaskSheetOpen} onOpenChange={setIsTaskSheetOpen} />
+      <BackendIntegrationSheet
+        open={isIntegrationSheetOpen}
+        onOpenChange={setIsIntegrationSheetOpen}
+      />
     </SidebarProvider>
   )
 }

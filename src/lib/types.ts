@@ -1,4 +1,5 @@
 export type TaskStatus = 'requested' | 'todo' | 'in_progress' | 'review' | 'done'
+export type TaskPriority = 'low' | 'medium' | 'high'
 
 export interface TimeLog {
   id: string
@@ -14,6 +15,7 @@ export interface Task {
   title: string
   description: string
   status: TaskStatus
+  priority: TaskPriority
   assignee: string
   clientName?: string
   deadline: string
@@ -36,4 +38,11 @@ export interface Chat {
   avatar: string
   messages: Message[]
   unread: number
+}
+
+export interface AppNotification {
+  id: string
+  message: string
+  read: boolean
+  createdAt: string
 }

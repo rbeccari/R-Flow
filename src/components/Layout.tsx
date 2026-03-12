@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -9,6 +9,9 @@ import {
   FileText,
   LogOut,
   User as UserIcon,
+  ListTodo,
+  Bell,
+  CheckCircle2,
 } from 'lucide-react'
 import {
   SidebarProvider,
@@ -31,11 +34,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAuth } from '@/hooks/use-auth'
+import useAppStore from '@/stores/useAppStore'
 import NewTaskSheet from './NewTaskSheet'
 
 const MENU_ITEMS = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
+  { title: 'Atendimentos', url: '/atendimentos', icon: ListTodo },
   { title: 'WhatsApp Inbox', url: '/inbox', icon: MessageCircle },
   { title: 'Quadro de Tarefas', url: '/tasks', icon: KanbanSquare },
   { title: 'Relatórios', url: '/reports', icon: FileText },
@@ -45,10 +53,9 @@ export default function Layout() {
   const location = useLocation()
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false)
   const { user, signOut } = useAuth()
+  const { notifications, markNotificationRead } = useAppStore()
 
-  const handleSignOut = async () => {
-    await signOut()
-  }
+  const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications])
 
   return (
     <SidebarProvider>
@@ -85,16 +92,66 @@ export default function Layout() {
               <div className="relative max-w-md w-full hidden sm:block">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar tarefas, contatos..."
+                  placeholder="Buscar tarefas..."
                   className="pl-9 bg-muted/50 border-none rounded-full h-9"
                 />
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative rounded-full">
+                    <Bell className="w-5 h-5" />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1.5 w-2 h-2 bg-destructive rounded-full" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-80 p-0">
+                  <div className="flex items-center justify-between p-4 border-b">
+                    <h4 className="font-semibold text-sm">Notificações</h4>
+                    <Badge variant="secondary">{unreadCount} novas</Badge>
+                  </div>
+                  <ScrollArea className="h-72">
+                    {notifications.length === 0 ? (
+                      <div className="p-4 text-sm text-center text-muted-foreground">
+                        Nenhuma notificação.
+                      </div>
+                    ) : (
+                      <div className="flex flex-col">
+                        {notifications.map((n) => (
+                          <div
+                            key={n.id}
+                            className={`p-4 border-b text-sm flex gap-3 items-start cursor-pointer hover:bg-muted/50 transition-colors ${!n.read ? 'bg-primary/5' : ''}`}
+                            onClick={() => markNotificationRead(n.id)}
+                          >
+                            <div className="mt-0.5">
+                              {!n.read ? (
+                                <div className="w-2 h-2 bg-primary rounded-full" />
+                              ) : (
+                                <CheckCircle2 className="w-4 h-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                              <p className={`${!n.read ? 'font-medium' : 'text-muted-foreground'}`}>
+                                {n.message}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(n.createdAt).toLocaleString('pt-BR')}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </PopoverContent>
+              </Popover>
+
               <Button
                 onClick={() => setIsTaskSheetOpen(true)}
                 size="sm"
-                className="rounded-full shadow-sm"
+                className="rounded-full shadow-sm ml-2 hidden sm:flex"
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Nova Tarefa
@@ -115,24 +172,17 @@ export default function Layout() {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{user?.name || 'Usuário'}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user?.email || 'usuario@agencia.com'}
-                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="cursor-pointer w-full flex items-center">
-                      <UserIcon className="mr-2 h-4 w-4" />
-                      <span>Meu Perfil</span>
+                      <UserIcon className="mr-2 h-4 w-4" /> Meu Perfil
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleSignOut}
-                    className="text-destructive focus:text-destructive cursor-pointer"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sair</span>
+                  <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" /> Sair
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

@@ -1,25 +1,19 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-  ReactNode,
-  useEffect,
-} from 'react'
-import { Task, Chat, TimeLog, TaskStatus } from '@/lib/types'
-import { MOCK_TASKS } from './mockData'
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react'
+import { Task, Chat, TimeLog, TaskStatus, AppNotification } from '@/lib/types'
+import { MOCK_TASKS, MOCK_NOTIFICATIONS } from './mockData'
 import { toast } from '@/hooks/use-toast'
 import { skipCloud } from '@/lib/skip-cloud/client'
 
 interface AppStoreContextType {
   tasks: Task[]
   chats: Chat[]
+  notifications: AppNotification[]
   loadingChats: boolean
   addTask: (task: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => void
   updateTaskStatus: (taskId: string, status: TaskStatus) => void
   addTimeLog: (taskId: string, log: Omit<TimeLog, 'id'>) => void
   markChatRead: (chatId: string) => void
+  markNotificationRead: (id: string) => void
 }
 
 const AppStoreContext = createContext<AppStoreContextType | null>(null)
@@ -30,9 +24,10 @@ export default function useAppStore() {
   return context
 }
 
-export function AppStoreProvider({ children }: { children: ReactNode }) {
+export function AppStoreProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS)
   const [chats, setChats] = useState<Chat[]>([])
+  const [notifications, setNotifications] = useState<AppNotification[]>(MOCK_NOTIFICATIONS)
   const [loadingChats, setLoadingChats] = useState(true)
 
   useEffect(() => {
@@ -73,12 +68,21 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     (newTask: Omit<Task, 'id' | 'createdAt' | 'history' | 'timeLogs'>) => {
       const task: Task = {
         ...newTask,
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).substring(2, 9),
         createdAt: new Date().toISOString(),
         history: ['Tarefa criada'],
         timeLogs: [],
       }
       setTasks((prev) => [task, ...prev])
+      setNotifications((prev) => [
+        {
+          id: Math.random().toString(36).substring(2, 9),
+          message: `Nova tarefa: ${task.title}`,
+          read: false,
+          createdAt: new Date().toISOString(),
+        },
+        ...prev,
+      ])
       toast({ title: 'Sucesso', description: 'Tarefa criada com sucesso!' })
     },
     [],
@@ -107,7 +111,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const addTimeLog = useCallback((taskId: string, log: Omit<TimeLog, 'id'>) => {
-    const newLog: TimeLog = { ...log, id: Math.random().toString(36).substr(2, 9) }
+    const newLog: TimeLog = { ...log, id: Math.random().toString(36).substring(2, 9) }
     setTasks((prev) =>
       prev.map((t) => {
         if (t.id !== taskId) return t
@@ -125,17 +129,33 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setChats((prev) => prev.map((c) => (c.id === chatId ? { ...c, unread: 0 } : c)))
   }, [])
 
+  const markNotificationRead = useCallback((id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
+  }, [])
+
   const contextValue = useMemo(
     () => ({
       tasks,
       chats,
+      notifications,
       loadingChats,
       addTask,
       updateTaskStatus,
       addTimeLog,
       markChatRead,
+      markNotificationRead,
     }),
-    [tasks, chats, loadingChats, addTask, updateTaskStatus, addTimeLog, markChatRead],
+    [
+      tasks,
+      chats,
+      notifications,
+      loadingChats,
+      addTask,
+      updateTaskStatus,
+      addTimeLog,
+      markChatRead,
+      markNotificationRead,
+    ],
   )
 
   return <AppStoreContext.Provider value={contextValue}>{children}</AppStoreContext.Provider>

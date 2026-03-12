@@ -1,12 +1,12 @@
-import { Task } from '@/lib/types'
+import { Task, AppNotification } from '@/lib/types'
 
 export const MOCK_TASKS: Task[] = [
   {
     id: 't1',
     title: 'Ajuste de Copy - Campanha Verão',
-    description:
-      'O cliente pediu para alterar a copy do post 3 para focar mais em "exclusividade".',
+    description: 'O cliente pediu para alterar a copy do post 3.',
     status: 'done',
+    priority: 'medium',
     assignee: 'Mariana Silva',
     clientName: 'Alpha S/A',
     deadline: new Date(Date.now() - 86400000).toISOString(),
@@ -22,43 +22,27 @@ export const MOCK_TASKS: Task[] = [
         durationMinutes: 60,
         summary: 'Ajustes de copy',
       },
-      {
-        id: 'l2',
-        taskId: 't1',
-        startTime: new Date(Date.now() - 86400000 * 1).toISOString(),
-        endTime: new Date(Date.now() - 86400000 * 1 + 1800000).toISOString(),
-        durationMinutes: 30,
-        summary: 'Revisão final',
-      },
     ],
   },
   {
     id: 't2',
     title: 'Aprovação Key Visual Anual',
-    description: 'Precisamos enviar o KV final para o cliente aprovar antes de desdobrar as peças.',
-    status: 'done',
+    description: 'Precisamos enviar o KV final para o cliente aprovar.',
+    status: 'review',
+    priority: 'high',
     assignee: 'Carlos Design',
     clientName: 'Boutique Beta',
     deadline: new Date(Date.now() - 86400000).toISOString(),
     createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    completedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    history: ['Design movido para revisão', 'Status alterado para done'],
-    timeLogs: [
-      {
-        id: 'l3',
-        taskId: 't2',
-        startTime: new Date(Date.now() - 86400000 * 3).toISOString(),
-        endTime: new Date(Date.now() - 86400000 * 3 + 7200000).toISOString(),
-        durationMinutes: 120,
-        summary: 'Design do KV',
-      },
-    ],
+    history: ['Design movido para revisão'],
+    timeLogs: [],
   },
   {
     id: 't3',
     title: 'Novo Post IG - Lançamento',
-    description: 'Criar arte para o lançamento do novo produto xXP.',
-    status: 'todo',
+    description: 'Criar arte para o lançamento.',
+    status: 'in_progress',
+    priority: 'high',
     assignee: 'João Social',
     clientName: 'Alpha S/A',
     deadline: new Date(Date.now() + 86400000 * 3).toISOString(),
@@ -70,22 +54,28 @@ export const MOCK_TASKS: Task[] = [
     id: 't4',
     title: 'Revisão de Textos - Blog',
     description: 'Revisar os 3 artigos para o blog de Abril.',
-    status: 'done',
+    status: 'todo',
+    priority: 'low',
     assignee: 'Mariana Silva',
     clientName: 'Alpha S/A',
-    deadline: new Date(Date.now() - 86400000 * 4).toISOString(),
-    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
-    completedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    history: ['Tarefa criada', 'Status alterado para done'],
-    timeLogs: [
-      {
-        id: 'l4',
-        taskId: 't4',
-        startTime: new Date(Date.now() - 86400000 * 6).toISOString(),
-        endTime: new Date(Date.now() - 86400000 * 6 + 5400000).toISOString(),
-        durationMinutes: 90,
-        summary: 'Revisão ortográfica e SEO',
-      },
-    ],
+    deadline: new Date(Date.now() + 86400000 * 4).toISOString(),
+    createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+    history: ['Tarefa criada'],
+    timeLogs: [],
+  },
+]
+
+export const MOCK_NOTIFICATIONS: AppNotification[] = [
+  {
+    id: 'n1',
+    message: 'Nova tarefa atribuída: Aprovação Key Visual Anual',
+    read: false,
+    createdAt: new Date(Date.now() - 3600000).toISOString(),
+  },
+  {
+    id: 'n2',
+    message: 'Status atualizado: Ajuste de Copy concluído',
+    read: true,
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
   },
 ]

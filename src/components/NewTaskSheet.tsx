@@ -10,7 +10,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import useAppStore from '@/stores/useAppStore'
+import { TaskPriority } from '@/lib/types'
 
 interface NewTaskSheetProps {
   open: boolean
@@ -29,6 +37,7 @@ export default function NewTaskSheet({
   const [assignee, setAssignee] = useState('')
   const [clientName, setClientName] = useState('')
   const [deadline, setDeadline] = useState('')
+  const [priority, setPriority] = useState<TaskPriority>('medium')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,6 +47,7 @@ export default function NewTaskSheet({
       description,
       assignee: assignee || 'Não Atribuído',
       clientName: clientName || 'Não Informado',
+      priority,
       deadline: deadline ? new Date(deadline).toISOString() : new Date().toISOString(),
       status: 'requested',
     })
@@ -47,13 +57,14 @@ export default function NewTaskSheet({
     setAssignee('')
     setClientName('')
     setDeadline('')
+    setPriority('medium')
   }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Nova Tarefa</SheetTitle>
+          <SheetTitle>Nova Tarefa / Serviço</SheetTitle>
           <SheetDescription>Crie uma nova demanda para a equipe.</SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-6">
@@ -64,7 +75,7 @@ export default function NewTaskSheet({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              placeholder="Ex: Alterar logo da campanha"
+              placeholder="Ex: Alterar logo"
             />
           </div>
           <div className="space-y-2">
@@ -77,12 +88,25 @@ export default function NewTaskSheet({
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="priority">Prioridade</Label>
+            <Select value={priority} onValueChange={(v) => setPriority(v as TaskPriority)}>
+              <SelectTrigger id="priority">
+                <SelectValue placeholder="Selecione a prioridade" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Baixa</SelectItem>
+                <SelectItem value="medium">Média</SelectItem>
+                <SelectItem value="high">Alta</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="description">Descrição</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-[120px]"
+              className="min-h-[100px]"
             />
           </div>
           <div className="space-y-2">
@@ -105,7 +129,7 @@ export default function NewTaskSheet({
             />
           </div>
           <Button type="submit" className="w-full">
-            Criar Tarefa
+            Criar Solicitação
           </Button>
         </form>
       </SheetContent>

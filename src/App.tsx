@@ -12,6 +12,7 @@ import Inbox from './pages/Inbox'
 import Tasks from './pages/Tasks'
 import TaskDetail from './pages/TaskDetail'
 import Reports from './pages/Reports'
+import Services from './pages/Services'
 import NotFound from './pages/NotFound'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -34,6 +35,7 @@ const App = () => (
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="/" element={<Index />} />
+                <Route path="/atendimentos" element={<Services />} />
                 <Route path="/inbox" element={<Inbox />} />
                 <Route path="/tasks" element={<Tasks />} />
                 <Route path="/tasks/:id" element={<TaskDetail />} />
